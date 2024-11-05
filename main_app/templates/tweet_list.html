@@ -24,6 +24,26 @@
                     <h5 class="card-title">{{ tweet.user.username }}</h5>
                     <p class="card-text">{{ tweet.content }}</p>
                     <p class="text-muted">{{ tweet.created_at }}</p>
+                    
+                    <form method="post" action="{% url 'reply_tweet' tweet.id %}">
+                        {% csrf_token %}
+                        {{ reply_form.content }}
+                        <button type="submit" class="btn btn-link">Reply</button>
+                    </form>
+
+                    <div class="replies mt-3">
+                        {% for reply in tweet.replies.all %}
+                            <div class="card my-2">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">{{ reply.user.username }}</h6>
+                                    <p class="card-text">{{ reply.content }}</p>
+                                    <p  class="text-muted">{{ reply.created_at }}</p>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p>No replies yet</p>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         {% empty %}

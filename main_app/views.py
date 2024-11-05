@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Tweet
-from .forms import TweetForm
+from .models import Tweet, Reply
+from .forms import TweetForm, ReplyForm
 
 # Create your views here.
 
@@ -59,4 +59,18 @@ def tweet_list(request):
         form = TweetForm()
 
     tweets = Tweet.objects.all().order_by('-created_at')
-    return render(request, 'tweet_list.html', {'form': form, 'tweets': tweets})
+    reply_form = ReplyForm()
+    return render(request, 'tweet_list.html', {'form': form, 'tweets': tweets, 'reply_form': reply_form})
+
+@login_required
+def reply_tweet(request, tweet_id):
+    tweet = get_object_or_404(Tweet, id=tweet_id)
+    if request.method == 'POST':
+        form = ReplyForm(request.POST)
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.user = request.user
+            reply.tweet = tweet
+            reply.save()
+            return redirect('tweet_list')
+    return redirect('tweet_list')
