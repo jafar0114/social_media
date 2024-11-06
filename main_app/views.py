@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Tweet, Reply
+from .models import Tweet, Reply, Like
 from .forms import TweetForm, ReplyForm
 
 # Create your views here.
@@ -73,4 +73,12 @@ def reply_tweet(request, tweet_id):
             reply.tweet = tweet
             reply.save()
             return redirect('tweet_list')
+    return redirect('tweet_list')
+
+@login_required
+def like_tweet(request, tweet_id):
+    tweet = get_object_or_404(Tweet, id=tweet_id)
+    like, created = Like.objects.get_or_create(tweet=tweet, user=request.user)
+    if not created:
+        like.delete()
     return redirect('tweet_list')

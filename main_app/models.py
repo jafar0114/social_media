@@ -19,3 +19,14 @@ class Reply(models.Model):
 
     def __str__(self):
         return f"Reply by {self.username} on {self.tweet}"
+    
+class Like(models.Model):
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('tweet', 'user')
+
+    def __str__(self):
+        return f"{self.user.username} likes {self.tweet.content}"

@@ -24,6 +24,13 @@
                     <h5 class="card-title">{{ tweet.user.username }}</h5>
                     <p class="card-text">{{ tweet.content }}</p>
                     <p class="text-muted">{{ tweet.created_at }}</p>
+
+                    <form method="post" action="{% url 'like_tweet' tweet.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary">
+                            Like ({{ tweet.likes.count }})
+                        </button>
+                    </form>
                     
                     <form method="post" action="{% url 'reply_tweet' tweet.id %}">
                         {% csrf_token %}
